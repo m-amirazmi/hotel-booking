@@ -17,17 +17,19 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
 	const { email, password } = req.body;
 
-	const user = await User.findOne({ email });
+	const user = await User.findOne({ email }).populate('address');
 	if (!user) return res.status(404).json({ message: 'User Not Found!', status: false });
 
 	const isPasswordCorrect = await bcrypt.compare(password, user.password);
 	if (!isPasswordCorrect) return res.status(400).json({ message: 'Wrong credentials!', status: false });
 
 	const token = jwt.sign({ id: user._id, roles: user.roles }, process.env.JWT);
+
+	delete user._doc.password;
 	const { roles, ...otherDetails } = user._doc;
 
 	res.cookie('access_token', token, { httpOnly: true });
-	return res.status(201).json({ message: 'Successfully logged in.', status: true, data: { details: { ...otherDetails }, roles } });
+	return res.status(201).json({ message: 'Successfully logged in.', status: true, data: { details: { ...otherDetails }, roles, token } });
 };
 
 exports.logout = (req, res, next) => {

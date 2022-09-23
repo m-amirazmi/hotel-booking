@@ -21,9 +21,10 @@ exports.createUser = async (req, res) => {
 	return res.status(201).json({ message: 'User created.', status: true, data: user });
 };
 
-exports.updateUser = (req, res) => {
-	const data = {};
-	return res.status(201).json({ message: 'User updated.', status: true, data });
+exports.updateUser = async (req, res) => {
+	const updatedUser = await User.findById(req.user.id, req.body, { new: true });
+
+	return res.status(201).json({ message: 'User updated.', status: true, data: updatedUser });
 };
 
 exports.getUser = (req, res) => {
@@ -32,9 +33,10 @@ exports.getUser = (req, res) => {
 	return res.status(200).json({ message: 'Retrieved user.', status: true, data });
 };
 
-exports.getUsers = (req, res) => {
-	const data = {};
-	return res.status(200).json({ message: 'Retrieved users.', status: true, data });
+exports.getUsers = async (req, res) => {
+	const users = await User.find();
+
+	return res.status(200).json({ message: 'Retrieved users.', status: true, data: users });
 };
 
 exports.deleteUser = (req, res) => {
