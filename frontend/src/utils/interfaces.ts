@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface IUserState {
 	loading?: boolean;
 	user: {
@@ -28,4 +30,21 @@ export interface IRouting {
 	isProtected?: boolean;
 	role?: string;
 	layout: string;
+}
+
+export interface IAuthInputProps {
+	type: string;
+	placeholder: string;
+	name: string;
+}
+
+export interface IAuthRoleModalProps {
+	roles: string[];
+	handleRole: (role: string) => void;
+}
+
+export interface IAuthFormProps {
+	type: string;
+	handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+	children: React.ReactNode;
 }

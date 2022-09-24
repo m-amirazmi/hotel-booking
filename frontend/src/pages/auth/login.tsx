@@ -1,36 +1,18 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { login } from '../../api/auth';
-import { userPending, userSet } from '../../redux/features/userSlice';
-import { RootState } from '../../redux/store';
+import { AuthForm } from '../../components/auth/auth-form';
+import { AuthInput } from '../../components/auth/auth-input';
+import { AuthRoleModal } from '../../components/auth/auth-role-modal';
+import { useLogin } from '../../hooks/useLogin';
 
 export const Login: React.FC = () => {
-	const [roleSelected, setRoleSelected] = useState<string>('');
-
-	const { roles } = useSelector((state: RootState) => state.user);
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
-
-	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const { email, password } = e.currentTarget;
-
-		dispatch(userPending());
-		const { data } = await login({ email: email.value, password: password.value });
-
-		await dispatch(userSet({ roles: data.roles, token: data.token, user: data.details }));
-
-		if (data.roles.length > 1) {
-			// alert('What role you want to choose?');
-		}
-	};
+	const { show, roles, handleLogin, handleRole } = useLogin();
 
 	return (
-		<form onSubmit={handleLogin}>
-			<input type="email" name="email" placeholder="eg: john@doe.com" />
-			<input type="password" name="password" placeholder="eg: 123456" />
-			<button type="submit">Login</button>
-		</form>
+		<section className="relative bg-gradient-to-br from-blue-700 to-blue-400 w-screen h-screen flex items-center justify-center">
+			<AuthForm type="login" handleSubmit={handleLogin}>
+				<AuthInput name="Email" placeholder="eg: john@doe.com" type="email" />
+				<AuthInput name="Password" placeholder="eg: 123456" type="password" />
+			</AuthForm>
+			{show && <AuthRoleModal roles={roles} handleRole={handleRole} />}
+		</section>
 	);
 };
